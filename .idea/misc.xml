@@ -3,4 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (Application_demo_NVIDIA)" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (Application_llm_tool_NVIDIA)" project-jdk-type="Python SDK" />
 </project>

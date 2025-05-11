@@ -6,7 +6,9 @@ from langchain.chains import LLMChain
 import config
 from tools.mongodb_tool import retrieve_from_mongodb
 from tools.sql_tool import generate_sql
+from tools.chart_tool import retrieve_chart
 import utils.prompt as prompt
+
 
 api_bp = Blueprint('api', __name__)
 
@@ -62,6 +64,14 @@ def process_query(question):
                 question=question,
                 raw_response=raw_response
             )
+        elif 'chart' in tool_choice:
+            tool_name = "Chart Retreiver"
+            raw_response = retrieve_chart(question)
+            # enhancement_prompt = prompt.CHART_ENHANCEMENT_TEMPLATE.format(
+            #     question=question,
+            #     raw_response=raw_response
+            # )
+            return raw_response, tool_name
         else:
             # Fallback to a general response
             tool_name = "General Response"
@@ -87,7 +97,6 @@ def query():
 
     question = data['query']
     response, tool_used = process_query(question)
-
     return jsonify({
         "response": response,
         "tool_used": tool_used

@@ -7,6 +7,7 @@ Determine which tool to use for this NVIDIA question.
 TOOLS:
 1. MongoDB Retriever: For NVIDIA annual reports, company information, business strategy, products, or history, proxy statement
 2. SQL Generator: For NVIDIA stock prices, performance metrics, or market trends
+3. Charts Retriever: For NVIDIA quarter reports, there are charts about financial information
 
 User Question: {question}
 
@@ -110,10 +111,23 @@ Format your response with:
 Keep response under 150 words, emphasize specific data points, and maintain financial analyst tone.
 """
 
-SQL_ENHANCEMENT_PROMPT = PromptTemplate(
+CHART_ENHANCEMENT_PROMPT = PromptTemplate(
     input_variables=["question", "raw_response"],
     template=SQL_ENHANCEMENT_TEMPLATE
 )
+
+CHART_ENHANCEMENT_TEMPLATE = """
+
+
+
+"""
+
+
+CHART_ENHANCEMENT_PROMPT = PromptTemplate(
+    input_variables=["question", "raw_response"],
+    template=CHART_ENHANCEMENT_TEMPLATE
+)
+
 
 # Improved error handling
 ERROR_TEMPLATE = """

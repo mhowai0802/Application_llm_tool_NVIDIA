@@ -2,6 +2,26 @@
 MONGO_URI = "mongodb+srv://mhowaiwork:joniwhfe@cluster0.tfwsu.mongodb.net/"
 MONGO_DB = "nvidia_reports"
 MONGO_COLLECTION = "annual_tocs"
+MONGO_COLLECTION_CHART = "nvidia_charts"
+MONGO_USER = "mhowaiwork"
+MONGO_PASSWORD = "joniwhfe"
+
+MONGO_CONFIG = {
+    # MongoDB connection parameters
+    'username': 'mhowaiwork',  # Will be set from env vars or user input
+    'password': 'joniwhfe',  # Will be set from env vars or user input
+    'cluster': 'cluster0.tfwsu.mongodb.net',
+    'app_name': 'Cluster0',
+    'retry_writes': True,
+    'w': 'majority',
+    # SSL Configuration
+    'ssl': True,
+    'ssl_cert_reqs': 'CERT_NONE',  # Can be changed to 'CERT_NONE' to disable verification
+    'tls_ca_file': None,  # Path to a CA certificate file if needed
+    # Database and collection names
+    'database': 'nvidia_reports',
+    'collection': 'nvidia_charts'
+}
 
 CONFIG = {
     "api": {
