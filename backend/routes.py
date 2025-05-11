@@ -80,6 +80,7 @@ def process_query(question):
 
         # Enhance the response with the appropriate prompt
         enhanced_response = call_llm_api(enhancement_prompt)
+        enhanced_response = enhanced_response.replace("## SQL Query Results for NVIDIA Stock Data","")
         return enhanced_response, tool_name
 
     except Exception as e:

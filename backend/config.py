@@ -28,7 +28,7 @@ CONFIG = {
         "key": "e7156e27-f44b-4fb1-b34f-fc34a4369b7b",  # Replace with your actual API key
         "base_url": "https://genai.hkbu.edu.hk/general/rest",
         "model": "gpt-4-o-mini",
-        "api_version": "2024-05-01-preview"
+        "api_version": "2024-10-21"
     },
     "ollama": {
         "model": "llama3.2",

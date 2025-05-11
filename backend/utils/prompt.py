@@ -56,7 +56,8 @@ Question about NVIDIA's business: {question}
 Annual report data: {raw_response}
 
 Provide a response that in point form (maximum 5 points):
-- Answers the core question with figures in each point
+- First sentence should be a summary
+- Answers the core question with figures in each point precisely
 - Structures information in logical order of importance
 - Maintains professional financial reporting tone
 """
@@ -81,7 +82,7 @@ QUESTION: {question}
 RULES:
 1. Return ONLY valid MySQL query
 2. Use exact column names with single quotes for names with spaces: Date, 'Adj Close', Close, High, Low, Open, Volume
-3. For date values, use format MM/DD/YYYY (e.g., 2000-02-02) in WHERE clauses or do fuzzy match
+3. For date values, use format MM-DD-YYYY (e.g., 2000-02-02) in WHERE clauses or do fuzzy match
 4. Optimize for query efficiency
 5. Add appropriate time period if question implies historical analysis
 6. Limit results to 7 rows unless specified otherwise
@@ -102,13 +103,12 @@ Question about NVIDIA stock: {question}
 SQL results: {raw_response}
 
 Format your response with:
-1. OVERVIEW: One-sentence summary of key finding
-2. DATA HIGHLIGHTS: present the figures in point form (prices, dates, % changes) 
-3. TREND ANALYSIS: Brief explanation of pattern or trend (if present)
-4. CONTEXT: Brief market or company context for these numbers (optional)
-5. SQL generated: {raw_response}
+1. SQL generated: {raw_response}
+2. OVERVIEW: One-sentence summary of key finding
+3. DATA HIGHLIGHTS: present the figures in point form (prices, dates, % changes) 
 
-Keep response under 150 words, emphasize specific data points, and maintain financial analyst tone.
+
+Keep response under 150 words, emphasize specific data points, and maintain financial analyst tone, do not output residuals.
 """
 
 CHART_ENHANCEMENT_PROMPT = PromptTemplate(
