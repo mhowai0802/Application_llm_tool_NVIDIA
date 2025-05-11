@@ -64,7 +64,7 @@ def generate_sql(query: str) -> str:
         llm = Ollama(
             model=config.CONFIG["ollama"]["model"],
             base_url=config.CONFIG["ollama"]["base_url"],
-            temperature=0.1  # Lower temperature for more deterministic SQL generation
+            temperature=0  # Lower temperature for more deterministic SQL generation
         )
 
         # Create LLM chain with the imported prompt

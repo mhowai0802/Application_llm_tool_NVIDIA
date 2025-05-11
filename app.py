@@ -1,9 +1,8 @@
 import streamlit as st
 import requests
 import json
-import time
-from PIL import Image
 import os
+from PIL import Image
 
 # Set up page configuration
 st.set_page_config(
@@ -17,7 +16,7 @@ st.markdown("""
 <style>
     .main-header {
         font-size: 2.5rem;
-        color: #4527A0;
+        color: black;
         margin-bottom: 0;
     }
     .sub-header {
@@ -29,28 +28,42 @@ st.markdown("""
     .stTextInput>div>div>input {
         border-radius: 10px;
     }
-    .user-bubble {
-        background-color: #E3F2FD;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 10px;
-        border-left: 5px solid #2196F3;
+    .chat-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
+    /* New user message style based on screenshot */
+    .user-bubble {
+        background-color: #FFFFFF;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin: 5px 0 15px 0;
+        border-left: 5px solid #2196F3;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    /* New AI message style based on screenshot */
     .ai-bubble {
-        background-color: #F3E5F5;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 10px;
+        background-color: #FFFFFF;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin: 5px 0 15px 0;
         border-left: 5px solid #9C27B0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    /* Bold formatting for sections within AI responses */
+    .ai-bubble strong {
+        color: #6A1B9A;
     }
     .tool-tag {
+        display: inline-block;
         background-color: #E8EAF6;
         color: #3F51B5;
         padding: 3px 8px;
         border-radius: 8px;
         font-size: 0.8rem;
         margin-top: 5px;
-        display: inline-block;
     }
     .error-message {
         background-color: #FFEBEE;
@@ -101,6 +114,7 @@ if "messages" not in st.session_state:
 
 # Sidebar with controls, info, and architecture flowchart
 with st.sidebar:
+    # Using the LangChain logo from the provided URL
     st.image("https://nathankjer.com/wp-content/uploads/2023/04/imageedit_3_8921363341-e1680611897170.png", width=200)
 
     st.markdown('<div class="sidebar-header">About</div>', unsafe_allow_html=True)
@@ -112,16 +126,16 @@ with st.sidebar:
     st.markdown('<div class="sidebar-header">Controls</div>', unsafe_allow_html=True)
     if st.button("Clear Conversation", key="clear_chat"):
         st.session_state.messages = []
-        st.experimental_rerun()
+        st.rerun()
 
     # System Architecture section with expander
     st.markdown('<div class="sidebar-header">System Architecture</div>', unsafe_allow_html=True)
     with st.expander("View System Flowchart", expanded=False):
         # Flowchart container
-        st.markdown('<div>', unsafe_allow_html=True)
+        st.markdown('<div class="flowchart-container">', unsafe_allow_html=True)
 
-        # Path to your flowchart PNG file
-        flowchart_path = "flow.png"  # Replace with your actual file path
+        # Using flow.png for the flowchart
+        flowchart_path = "flow.png"
 
 
         # Function to load and display the image
@@ -132,7 +146,7 @@ with st.sidebar:
                     st.image(image, caption="System Architecture", use_container_width=True)
                 else:
                     st.error(f"Image not found: {image_path}")
-                    st.info("Update the flowchart path in the code.")
+                    st.info("Make sure 'flow.png' is in the same directory as this script.")
             except Exception as e:
                 st.error(f"Error loading image: {str(e)}")
 
@@ -185,20 +199,23 @@ with col2:
     st.markdown('<p class="sub-header">A chatbot powered by LangChain, Ollama, MongoDB, and SQL</p>',
                 unsafe_allow_html=True)
 
-    # Chat container
-    chat_container = st.container()
+    # Chat container with white background
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 
-    with chat_container:
-        # Display chat history with improved styling
-        for message in st.session_state.messages:
-            if message["role"] == "user":
-                st.markdown(f'<div class="user-bubble"><b>You:</b> {message["content"]}</div>', unsafe_allow_html=True)
-            else:
-                tool_info = f'<div class="tool-tag">🛠️ Tool: {message["tool"]}</div>' if "tool" in message else ""
-                st.markdown(
-                    f'<div class="ai-bubble"><b>AI:</b> {message["content"]}{tool_info}</div>',
-                    unsafe_allow_html=True
-                )
+    # Display chat history with improved styling based on screenshot
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            st.markdown(f'<div class="user-bubble"><b>You:</b> {message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            content = message["content"]
+            # Format the content to match the numbered list style in screenshot if needed
+            tool_info = f'<div class="tool-tag">🛠️ Tool: {message["tool"]}</div>' if "tool" in message else ""
+            st.markdown(
+                f'<div class="ai-bubble"><b>AI:</b> {content}{tool_info}</div>',
+                unsafe_allow_html=True
+            )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Chat input at the bottom
     prompt_input = st.chat_input("Ask something about NVIDIA...")
@@ -207,23 +224,7 @@ with col2:
         # Add user message to chat
         st.session_state.messages.append({"role": "user", "content": prompt_input})
 
-        # Display user message (will be added to the chat container on rerun)
-        st.markdown(f'<div class="user-bubble"><b>You:</b> {prompt_input}</div>', unsafe_allow_html=True)
-
-        # Create placeholder for assistant response
-        response_placeholder = st.empty()
-
-        # Show thinking animation
-        with response_placeholder.container():
-            thinking_text = "AI is thinking"
-            for i in range(3):
-                st.markdown(f'<div class="ai-bubble"><b>AI:</b> {thinking_text}{"." * (i + 1)}</div>',
-                            unsafe_allow_html=True)
-                time.sleep(0.5)
-                if i < 2:  # Don't need to clear on the last iteration
-                    st.empty()
-
-        # Generate response
+        # Generate response without animation
         try:
             # Call the Flask API
             response = requests.post(
@@ -238,14 +239,6 @@ with col2:
                 final_response = data["response"]
                 tool_used = data["tool_used"]
 
-                # Update placeholder with real response
-                with response_placeholder.container():
-                    tool_info = f'<div class="tool-tag">🛠️ Tool: {tool_used}</div>'
-                    st.markdown(
-                        f'<div class="ai-bubble"><b>AI:</b> {final_response}{tool_info}</div>',
-                        unsafe_allow_html=True
-                    )
-
                 # Add assistant response to chat history
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -254,10 +247,6 @@ with col2:
                 })
             else:
                 error_msg = f"The server returned an error (Status: {response.status_code}). Please try again or contact support if the problem persists."
-                with response_placeholder.container():
-                    st.markdown(f'<div class="ai-bubble"><b>AI:</b> <div class="error-message">{error_msg}</div></div>',
-                                unsafe_allow_html=True)
-
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": error_msg,
@@ -265,10 +254,6 @@ with col2:
                 })
         except requests.exceptions.Timeout:
             error_msg = "The request timed out. The server might be experiencing heavy load. Please try again."
-            with response_placeholder.container():
-                st.markdown(f'<div class="ai-bubble"><b>AI:</b> <div class="error-message">{error_msg}</div></div>',
-                            unsafe_allow_html=True)
-
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": error_msg,
@@ -276,12 +261,11 @@ with col2:
             })
         except Exception as e:
             error_msg = f"Unable to connect to the backend server. Please check if the server is running or try again later."
-            with response_placeholder.container():
-                st.markdown(f'<div class="ai-bubble"><b>AI:</b> <div class="error-message">{error_msg}</div></div>',
-                            unsafe_allow_html=True)
-
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": error_msg,
                 "tool": "Error"
             })
+
+        # Rerun to update the UI with the new messages
+        st.rerun()
